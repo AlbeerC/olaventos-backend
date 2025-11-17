@@ -20,7 +20,7 @@ import { EventosModule } from './organizadores/evento.module';
         database: config.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         autoLoadEntities: true,
-        synchronize: true, // solo dev
+      synchronize: process.env.NODE_ENV !== 'production'
       }),
     }), UsuariosModule, AuthModule, EventosModule
   ],
