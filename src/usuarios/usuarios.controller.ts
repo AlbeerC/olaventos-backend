@@ -1,7 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Patch, Param, Body } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Patch, Param, Body, UseGuards } from '@nestjs/common'
 import { UsuariosService } from './usuarios.service'
 import { Usuario } from './usuario.entity'
 import { CreateUsuarioDto } from './dto/create-usuario.dto'
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
+import { UpdateUserDto } from './dto/dto.update'
+import { ChangePasswordDto } from './dto/cambiar-contraseña.dto'
+import { Req } from '@nestjs/common'
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -40,5 +44,19 @@ export class UsuariosController {
   @Patch(':id/approve')
   approve(@Param('id') id: string) {
     return this.usuariosService.approve(+id)
+  }
+
+  // PATCH /usuarios/me
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  updateMe(@Req() req, @Body() dto: UpdateUserDto) {
+    return this.usuariosService.updateUser(req.user.userId, dto)
+  }
+
+  // PATCH /usuarios/me/password
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/password')
+  changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
+    return this.usuariosService.changePassword(req.user.userId, dto)
   }
 }
